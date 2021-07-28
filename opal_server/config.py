@@ -110,5 +110,12 @@ class OpalServerConfig(Confi):
     SERVER_PORT = confi.int("SERVER_PORT", 7002,
                             description="(if run via CLI)  Port for the server to bind")
 
+    # aws s3
+    AWS_ACCESS_KEY_ID = confi.str("AWS_ACCESS_KEY_ID", None, description="AWS access key for login")
+    AWS_SECRET_ACCESS_KEY = confi.str("AWS_SECRET_ACCESS_KEY", None, description="AWS secret access key for login")
+    AWS_SESSION_TOKEN = confi.str("AWS_SESSION_TOKEN", None, description="AWS session token for login")
+    AWS_BUCKET_NAME = confi.str("AWS_BUCKET_NAME", None, description="AWS bucket name for policy update")
+    AWS_OBJECT_NAME = confi.str("AWS_OBJECT_NAME", None, description="AWS object name for policy update")
+
 
 opal_server_config = OpalServerConfig(prefix="OPAL_")
