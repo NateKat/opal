@@ -116,6 +116,6 @@ class OpalServerConfig(Confi):
     AWS_SESSION_TOKEN = confi.str("AWS_SESSION_TOKEN", None, description="AWS session token for login")
     AWS_BUCKET_NAME = confi.str("AWS_BUCKET_NAME", None, description="AWS bucket name for policy update")
     AWS_OBJECT_NAME = confi.str("AWS_OBJECT_NAME", None, description="AWS object name for policy update")
-
+    AWS_REGION_NAME = confi.str("AWS_REGION_NAME", None, description="AWS region name for policy update")
 
 opal_server_config = OpalServerConfig(prefix="OPAL_")

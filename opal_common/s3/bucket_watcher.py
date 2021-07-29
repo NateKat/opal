@@ -1,6 +1,6 @@
 from opal_server.config import opal_server_config
 from opal_common.logger import logger
-from boto3 import session, resource
+from boto3 import session
 import time
 
 
@@ -15,12 +15,10 @@ class BucketWatcher(object):
         self._polling_interval = polling_interval
         self._session = session.Session(
             aws_access_key_id=opal_server_config.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=opal_server_config.AWS_SECRET_ACCESS_KEY
-            #aws_session_token=opal_server_config.AWS_SESSION_TOKEN
+            aws_secret_access_key=opal_server_config.AWS_SECRET_ACCESS_KEY,
+            region_name=opal_server_config.AWS_REGION_NAME,
         )
-        # TODO: replace resource direct call with session, so we don't rely on AWS config files hack
-        #self._s3 = self._session.resource('s3')
-        self._s3 = resource('s3')
+        self._s3 = self._session.resource('s3')
         self.bucket = self._s3.Bucket(self.bucket_name)
         self.curr_file = self.get_last_modified_file()
         self.curr_version = self.latest_version(self.curr_file)
