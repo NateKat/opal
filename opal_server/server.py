@@ -13,6 +13,7 @@ from opal_common.schemas.data import ServerDataSourceConfig
 from opal_common.synchronization.named_lock import NamedLock
 from opal_common.middleware import configure_middleware
 from opal_common.authentication.signer import JWTSigner
+from opal_common.s3.bucket_watcher import BucketWatcher
 from opal_server.config import opal_server_config
 from opal_server.data.api import init_data_updates_router
 from opal_server.data.data_update_publisher import DataUpdatePublisher
@@ -25,12 +26,12 @@ from opal_server.policy.watcher.task import RepoWatcherTask
 from opal_server.publisher import setup_publisher_task
 from opal_server.pubsub import PubSub
 
-
 class OpalServer:
 
     def __init__(
         self,
         init_git_watcher: bool = None,
+        init_s3_watcher: bool = None,
         policy_repo_url: str = None,
         init_publisher: bool = None,
         data_sources_config: Optional[ServerDataSourceConfig] = None,
@@ -68,6 +69,7 @@ class OpalServer:
         """
         # load defaults
         init_git_watcher: bool = init_git_watcher or opal_server_config.REPO_WATCHER_ENABLED
+        init_s3_watcher: bool = init_s3_watcher or opal_server_config.AWS_BUCKET_NAME
         policy_repo_url: str = policy_repo_url or opal_server_config.POLICY_REPO_URL
         init_publisher: bool = init_publisher or opal_server_config.PUBLISHER_ENABLED
         broadcaster_uri: str = broadcaster_uri or opal_server_config.BROADCAST_URI
@@ -111,7 +113,10 @@ class OpalServer:
         if init_publisher:
             self.publisher = ServerSideTopicPublisher(self.pubsub.endpoint)
 
-            if init_git_watcher:
+            if init_s3_watcher:
+                bucket_watcher = BucketWatcher()
+                bucket_watcher.do_polling()
+            elif init_git_watcher:
                 if policy_repo_url is not None:
                     self.watcher = setup_watcher_task(self.publisher)
                 else:
